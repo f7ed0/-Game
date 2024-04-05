@@ -2,7 +2,7 @@
 
 ## About the project
 
-This project is a game prototype of game created with **SDL2** and **openGL** for linux (I guess you could easily find a way to compile it for windows but I never tested it).
+This project is a game prototype of game created with **SDL2** and **openGL** for **linux** (I guess you could easily find a way to compile it for windows but I never tested it).
 
 The main goal of the project is to learn how game motors works and how to use libraries such as openGL to work with the GPU.
 

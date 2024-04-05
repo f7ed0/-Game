@@ -121,7 +121,7 @@ Game::Game() {
     for ( int i = 0 ; i < 16 ; i++ ) {
         for ( int j = 0 ; j < 16 ; j++ ) {
             this->map[i*16+j] = new objects::Cube({(GLfloat) i,0,(GLfloat) j},1);
-            this->map[i*16+j]->setTextures(dirt);
+            this->map[i*16+j]->setTextures(t);
         }
     }
 

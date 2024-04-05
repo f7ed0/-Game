@@ -49,7 +49,7 @@ namespace game3D
 
             static bool subsystemsEnabled();
     };
-} // namespace 3DGAME
+}
 
 
 #endif

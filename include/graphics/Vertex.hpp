@@ -33,7 +33,7 @@ namespace game3D::graphics {
             GLfloat* toCoordArr();
             GLfloat* toTexArr();
     };
-} // namespace game3D::graphics
+}
 
 
 #endif
