@@ -22,6 +22,8 @@ namespace game3D::graphics {
 
             Vertex(objects::Point p);
 
+            ~Vertex();
+
             GLfloat* toArr();
 
     };

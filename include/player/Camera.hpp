@@ -15,6 +15,7 @@ namespace game3D::player {
             Camera(const objects::Point __position, const objects::Vector __angle);
 
             void rotate(const objects::Vector angle);
+            void rotateLock(const objects::Vector angle);
 
             void move(const objects::Vector amount);
 

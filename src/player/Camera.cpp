@@ -4,6 +4,8 @@
 
 using namespace game3D::player;
 
+#define M_3_PI_2 3*M_PI_2
+
 Camera::Camera() {
     this->position = objects::Point();
     this->angle = objects::Vector();
@@ -17,6 +19,15 @@ Camera::Camera(objects::Point __position, objects::Vector __angle) {
 
 void Camera::rotate(objects::Vector angle) {
     this->angle.moveAmount(angle);
+    this->angle.modulo(M_PI*2);
+}
+
+void Camera::rotateLock(objects::Vector angle) {
+    if(cosf32(this->angle.getX()+angle.getX()) < 0.05f) {
+        this->angle.moveTo(this->angle.getX() > M_PI ? (M_3_PI_2)+0.05f : (M_PI_2)-0.05f,this->angle.getY()+angle.getY(),this->angle.getZ()+angle.getZ());
+    } else {
+        this->angle.moveAmount(angle);
+    }
     this->angle.modulo(M_PI*2);
 }
 

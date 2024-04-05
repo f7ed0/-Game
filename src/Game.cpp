@@ -16,7 +16,7 @@ Game::Game() {
     Logger::debug("Starting Game init...");
     this->test = objects::Cube({-7,0,0},4);
     this->test2 = objects::Cube({7,0,0},4);
-    this->cam = player::Camera({0,-1,-12},{0,0,0});
+    this->cam = player::Camera({8,1.6,8},{0,0,0});
 
     if(!this->subsystemsEnabled()) {
         throw error::SubsystemNotEnabled();
@@ -43,9 +43,9 @@ Game::Game() {
     glShadeModel( GL_SMOOTH );
 
     /* Culling. */
-    glCullFace( GL_BACK );
+    //glCullFace( GL_BACK );
     glFrontFace( GL_CCW );
-    glEnable( GL_CULL_FACE );
+    //glEnable( GL_CULL_FACE );
 
     /* Set the clear color. */
     glClearColor( 0, 0, 0, 0 );
@@ -56,7 +56,7 @@ Game::Game() {
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity( );
 
-    gluPerspective( 90.0, ratio, 1.0, 1024.0 );
+    gluPerspective( 90.0, ratio, 0.1, 1024.0 );
 
     glEnable (GL_DEPTH_TEST);
 
@@ -101,7 +101,6 @@ Game::Game() {
         }
 
         glTexImage2D(GL_TEXTURE_2D, 0, Mode, s->w, s->h, 0, Mode, GL_UNSIGNED_BYTE, s->pixels);
-    
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -112,9 +111,19 @@ Game::Game() {
 
 
     GLuint t[] = {*this->texture.at(1),*this->texture.at(1),*this->texture.at(0),*this->texture.at(2),*this->texture.at(1),*this->texture.at(1)};
+    GLuint dirt[] = {*this->texture.at(2),*this->texture.at(2),*this->texture.at(2),*this->texture.at(2),*this->texture.at(2),*this->texture.at(2)};
 
     this->test.setTextures(t);
     this->test2.setTextures(t);
+
+    this->map = (objects::Cube **) calloc(sizeof(objects::Cube *),256);
+
+    for ( int i = 0 ; i < 16 ; i++ ) {
+        for ( int j = 0 ; j < 16 ; j++ ) {
+            this->map[i*16+j] = new objects::Cube({(GLfloat) i,0,(GLfloat) j},1);
+            this->map[i*16+j]->setTextures(dirt);
+        }
+    }
 
     Logger::info("GAME INIT DONE");
 }

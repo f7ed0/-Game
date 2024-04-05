@@ -16,6 +16,7 @@ namespace game3D
             SDL_Renderer* r;
             Uint64 timing = 0;
             objects::Cube test,test2;
+            objects::Cube** map;
             std::vector<GLuint*> texture;
             player::Camera cam;
             player::KeyboardHandler kb;
@@ -24,8 +25,8 @@ namespace game3D
         protected :
             bool running;
 
-            void eventLoop();
-            void renderLoop();
+            void eventLoop(float delta);
+            void renderLoop(float delta);
         public :
             /**
              * 

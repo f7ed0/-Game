@@ -6,17 +6,8 @@
 
 using namespace game3D::objects;
 
-/*
-static GLubyte red[]    = { 255,   0,   0, 255 };
-static GLubyte green[]  = {   0, 255,   0, 255 };
-static GLubyte blue[]   = {   0,   0, 255, 255 };
-static GLubyte white[]  = { 255, 255, 255, 255 };
-static GLubyte cyan[] = {   0, 255, 255, 255 };
-static GLubyte yellow[] = { 255, 255,   0, 255 };
-*/
-
 Cube::Cube(Point _center, GLfloat _width) {
-    this->center = new Point(_center);
+    this->center = new Point(_center.getX(),_center.getY(),-_center.getZ());
     this->width = _width;
     this->rotation = new Vector();
 }
@@ -52,14 +43,14 @@ void Cube::render() {
         clones[i] = new Point(*center);
     }
 
-    clones[0]->moveAmount(-width/2,-width/2,width/2); // 0
-    clones[1]->moveAmount(width/2,-width/2,width/2); // 1
-    clones[2]->moveAmount(width/2,width/2,width/2); // 2
-    clones[3]->moveAmount(-width/2,width/2,width/2); // 3
-    clones[4]->moveAmount(-width/2,-width/2,-width/2); // 4
-    clones[5]->moveAmount(width/2,-width/2,-width/2); // 5
-    clones[6]->moveAmount(width/2,width/2,-width/2); // 6
-    clones[7]->moveAmount(-width/2,width/2,-width/2); // 7
+    clones[0]->moveAmount(-width/2,-width/2,width/2);   // 0
+    clones[1]->moveAmount(width/2,-width/2,width/2);    // 1
+    clones[2]->moveAmount(width/2,width/2,width/2);     // 2
+    clones[3]->moveAmount(-width/2,width/2,width/2);    // 3
+    clones[4]->moveAmount(-width/2,-width/2,-width/2);  // 4
+    clones[5]->moveAmount(width/2,-width/2,-width/2);   // 5
+    clones[6]->moveAmount(width/2,width/2,-width/2);    // 6
+    clones[7]->moveAmount(-width/2,width/2,-width/2);   // 7
 
     // Apply rotation
     for (int i = 0 ; i < 8 ; i++) {
@@ -85,7 +76,8 @@ void Cube::render() {
 
     GLubyte Indices[4];
 
-    
+    GLfloat* texarr = Vertexes->toTexArr();
+    GLfloat* coordarr = Vertexes->toCoordArr();
     
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -95,9 +87,9 @@ void Cube::render() {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    glTexCoordPointer(2, GL_FLOAT, 0, Vertexes->toTexArr());
+    glTexCoordPointer(2, GL_FLOAT, 0, texarr);
 
-    glVertexPointer(3, GL_FLOAT, 0, Vertexes->toCoordArr());
+    glVertexPointer(3, GL_FLOAT, 0, coordarr);
 
     for(int i = 0 ; i < 6 ; i++) {
         glBindTexture(GL_TEXTURE_2D, this->textures[i]);
@@ -106,10 +98,13 @@ void Cube::render() {
         }
         glDrawElements(GL_QUADS, 4, GL_UNSIGNED_BYTE, Indices);
     }
-    
 
     glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    delete Vertexes;
+    free(texarr);
+    free(coordarr);
 }
 
 void Cube::setTexture(Face face, GLuint tex) {

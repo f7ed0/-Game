@@ -5,6 +5,9 @@ using namespace game3D::graphics;
 
 Vertex::Vertex() {
     this->arr_rep = (GLfloat*) malloc(this->ALLOC_SIZE);
+    if (this->arr_rep == NULL) {
+        throw -1;
+    }
     this->x = arr_rep;
     this->y = arr_rep+1;
     this->z = arr_rep+2;
@@ -16,6 +19,13 @@ Vertex::Vertex() {
     for(int i=0 ; i < 8 ; i++) {
         this->arr_rep[i] = 0;
     }
+}
+
+Vertex::~Vertex() {
+    /*if (this->arr_rep != NULL) {
+        free(this->arr_rep);
+        this->arr_rep = NULL;
+    }*/
 }
 
 Vertex::Vertex(GLfloat _x,GLfloat _y,GLfloat _z,GLfloat _nx,GLfloat _ny,GLfloat _nz,GLfloat _s0,GLfloat _t0): Vertex() {

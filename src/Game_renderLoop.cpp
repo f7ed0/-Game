@@ -10,14 +10,12 @@ using namespace game3D;
 
 GLfloat angle = 10.0f;
 
-void Game::renderLoop() {
+void Game::renderLoop(float delta) {
+    std::stringstream ss;
     GLenum err;
     while((err = glGetError()) != GL_NO_ERROR)
     {
-        std::stringstream ss;
-
         ss << err;
-
         Logger::error(ss.str());
     }
 
@@ -33,7 +31,7 @@ void Game::renderLoop() {
     glRotatef( (this->cam.getRotY()*360.0f)/(M_PI*2), 0.0, 1, 0.0 );
     glRotatef( (this->cam.getRotZ()*360.0f)/(M_PI*2), 0.0, 0.0, 1 );
 
-    glTranslatef(-this->cam.getPosX(), this->cam.getPosY(), this->cam.getPosZ() );
+    glTranslatef(-this->cam.getPosX(), -this->cam.getPosY(), this->cam.getPosZ() );
 
 
     this->test.rotate(0, 0.01 , 0);
@@ -46,8 +44,10 @@ void Game::renderLoop() {
 
     this->test2.render();
 
+    for ( int i = 0 ; i < 256 ; i++ ) {
+        this->map[i]->render();
+    }
 
     SDL_GL_SwapWindow(this->w);
-
 
 }
