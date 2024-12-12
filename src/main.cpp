@@ -1,34 +1,54 @@
-#include <iostream>
 #include "Game.hpp"
-#include "logger/Logger.hpp"
 #include "error/SDLError.hpp"
+#include "graphics/shader.hpp"
+#include "logger/Logger.hpp"
+#include <GL/gl.h>
+#include <GL/glut.h>
+// #include <iostream>
 
 using namespace std;
 
+void logGL();
+
 int main() {
 
-    game3D::Logger::setLogLevel(game3D::LogLevel::debug);
+  game3D::Logger::setLogLevel(game3D::LogLevel::debug);
 
-    try {
+  try {
 
-        game3D::Game::initSubsystems();
+    game3D::Game::initSubsystems();
 
-        game3D::Game *a = new game3D::Game();
-        a->mainLoop();
+    game3D::Game *a = new game3D::Game();
 
-        game3D::Logger::debug("Deleting a...");
-        delete a;
+    logGL();
 
-        game3D::Logger::debug("done !");
+    // game3D::graphics::Shader s("a", "b");
 
-        game3D::Game::quitSubsystems();
+    a->mainLoop();
 
-    } catch (game3D::error::SDLError& e) {
-        game3D::Logger::error(e.getError());
-        exit(1);
-    }
+    game3D::Logger::debug("Deleting a...");
+    delete a;
 
-    game3D::Logger::info("Game exited normally.");
+    game3D::Logger::debug("done !");
 
-    return 0;
+    game3D::Game::quitSubsystems();
+
+  } catch (game3D::error::SDLError &e) {
+    game3D::Logger::error(e.getError());
+    exit(1);
+  }
+
+  game3D::Logger::info("Game exited normally.");
+
+  return 0;
+}
+
+void logGL() {
+  stringstream ss;
+
+  const unsigned char *x = glGetString(GL_VERSION);
+
+  ss << "USING OPENGL VERSION : " << x << endl;
+
+  game3D::Logger::info(ss.str());
 }
