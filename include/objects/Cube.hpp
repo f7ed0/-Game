@@ -1,42 +1,44 @@
 #ifndef GAME3D_OBJECTS_CUBE_HPP
 #define GAME3D_OBJECTS_CUBE_HPP
 
+#include "graphics/Texture.hpp"
+#include "graphics/shader.hpp"
 #include "objects/Point.hpp"
+#include <vector>
 
 namespace game3D::objects {
 
-    enum Face : GLuint {
-        top = 2,
-        bottom = 3,
-        face = 0,
-        back = 1,
-        left = 4,
-        right = 5,
-    };
+enum Face : GLuint {
+  top = 2,
+  bottom = 3,
+  face = 0,
+  back = 1,
+  left = 4,
+  right = 5,
+};
 
-    class Cube {
-        private:
-            Point* center;
-            GLfloat width;
-            Vector* rotation;
-            GLuint textures[6];
-        public :
-            Cube();
+class Cube {
+private:
+  Point *center;
+  GLfloat width;
+  Vector *rotation;
+  std::vector<game3D::graphics::Texture> texture;
 
-            Cube(Point center, GLfloat width);
+public:
+  Cube();
 
-            void rotate(GLfloat rx, GLfloat ry, GLfloat rz);
+  Cube(Point center, GLfloat width);
 
-            void moveAmount(GLfloat dx, GLfloat dy, GLfloat dz);
+  void rotate(GLfloat rx, GLfloat ry, GLfloat rz);
 
-            void render();
+  void moveAmount(GLfloat dx, GLfloat dy, GLfloat dz);
 
-            void rotateFrom(Point axis, GLfloat rx, GLfloat ry, GLfloat rz);
+  void draw(game3D::graphics::Shader &shader);
 
-            void setTexture(Face face, GLuint tex);
+  void rotateFrom(Point axis, GLfloat rx, GLfloat ry, GLfloat rz);
 
-            void setTextures(GLuint texs[]);
-    };
-}
+  void setTextures(game3D::graphics::Texture tex);
+};
+} // namespace game3D::objects
 
 #endif

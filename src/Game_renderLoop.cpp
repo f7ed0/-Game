@@ -1,3 +1,4 @@
+#include "objects/Cube.hpp"
 #include <ios>
 #define GL_GLEXT_PROTOTYPES
 
@@ -15,7 +16,7 @@
 
 using namespace game3D;
 
-GLfloat angle = 10.0f;
+// GLfloat angle = 10.0f;
 
 void Game::renderLoop(float delta) {
   std::stringstream ss;
@@ -26,37 +27,35 @@ void Game::renderLoop(float delta) {
     Logger::error(ss.str());
   }
 
+  // Logger::debug("Error getter passed");
+
   /* Clear the color and depth buffers. */
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // Logger::debug("clear_passed");
 
   /* We don't want to modify the projection matrix. */
   // glMatrixMode(GL_MODELVIEW);
   // glLoadIdentity();
   glPushMatrix();
 
-  game3D::graphics::VertexArray vertices;
-  vertices.push_back(game3D::graphics::Vertex(-0.5f, -0.5f, -10.0f, 0.0f, 0.0f,
-                                              0.0f, 0.0f, 0.0f));
-  vertices.push_back(game3D::graphics::Vertex(0.5f, -0.5f, -10.0f, 0.0f, 0.0f,
-                                              0.0f, 0.0f, 0.0f));
-  vertices.push_back(game3D::graphics::Vertex(0.5f, 0.5f, -10.0f, 0.0f, 0.0f,
-                                              0.0f, 0.0f, 0.0f));
-  vertices.push_back(game3D::graphics::Vertex(-0.5f, 0.5f, -10.0f, 0.0f, 0.0f,
-                                              0.0f, 0.0f, 0.0f));
-  std::vector<unsigned int> indices;
-  indices.push_back(0);
-  indices.push_back(1);
-  indices.push_back(2);
-  indices.push_back(2);
-  indices.push_back(3);
-  indices.push_back(0);
-  std::vector<graphics::Texture> textures;
-
-  graphics::Mesh mesh(vertices, indices, textures);
+  // Logger::debug("Creating cube");
 
   // glPolygonMode(GL_FRONT, GL_LINE);
-  mesh.draw(this->shader);
+  // mesh.draw(this->shader);
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  game3D::objects::Cube g({0, 0, -4.0f}, 1.0f);
+  // ss.clear();
+  // ss << this->textureArr.back().id;
+  // Logger::debug("assigning textures");
+  // Logger::debug(ss.str());
+  g.setTextures(this->textureArr.back());
+  // Logger::debug("Rotating");
+  g.rotate(M_PI / 4, M_PI / 4 + SDL_GetTicks() * 0.010f, M_PI * 0.18);
+  // game3D::Logger::debug("CALLING DRAW");
+  g.draw(this->shader);
 
   SDL_GL_SwapWindow(this->w);
   glPopMatrix();
+  // Logger::debug("RENDER LOOP FINISHED");
 }

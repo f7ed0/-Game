@@ -1,6 +1,7 @@
 #include "Game.hpp"
 #include "error/SDLError.hpp"
 #include "error/SubsystemNotEnabled.hpp"
+#include "graphics/Texture.hpp"
 #include "graphics/shader.hpp"
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -23,14 +24,19 @@ Game::Game() {
   if (!this->subsystemsEnabled()) {
     throw error::SubsystemNotEnabled();
   }
-  if (SDL_CreateWindowAndRenderer(1280, 720,
-                                  this->w_flags | SDL_WINDOW_RESIZABLE,
-                                  &this->w, &this->r) != 0) {
+  if (SDL_CreateWindowAndRenderer(1280, 720, this->w_flags, &this->w,
+                                  &this->r) != 0) {
     throw error::SDLError(SDL_GetError());
   }
   SDL_SetWindowTitle(this->w, "µ3Dgame - OpenGL");
 
   this->running = true;
+
+  std::stringstream ss;
+
+  ss << "USING OPENGL VERSION : " << glGetString(GL_VERSION);
+
+  game3D::Logger::info(ss.str());
 
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
@@ -38,15 +44,15 @@ Game::Game() {
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  // glEnable(GL_TEXTURE_2D);
+  glEnable(GL_TEXTURE_2D);
 
   /* Our shading model--Gouraud (smooth). */
-  // glShadeModel(GL_SMOOTH);
+  glShadeModel(GL_SMOOTH);
 
   /* Culling. */
-  // glCullFace(GL_BACK);
+  glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
-  // glEnable(GL_CULL_FACE);
+  glEnable(GL_CULL_FACE);
 
   /* Set the clear color. */
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -62,10 +68,15 @@ Game::Game() {
   float ratio = 1280.0f / 720.0f;
   gluPerspective(45.0f, ratio, 0.1, 4333);
 
-  // glEnable(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_TEST);
 
   shader = graphics::Shader("./assets/shaders/vertex1.glslv",
                             "./assets/shaders/fragment1.glslf");
+
+  graphics::Texture t("./assets/bloctex.png");
+  textureArr.push_back(t);
+
+  game3D::Logger::info("INIT OK");
 }
 
 Game::~Game() {

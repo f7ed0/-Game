@@ -76,7 +76,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) {
     int l;
     glGetShaderInfoLog(vertex, 512, &l, infoLog);
     std::stringstream ss;
-    ss << "ERROR::SHADER::VERTEX::COMPILATION_FAILED : " << l << infoLog;
+    ss << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED : " << l << infoLog;
     game3D::Logger::error(ss.str());
     throw -1;
   }

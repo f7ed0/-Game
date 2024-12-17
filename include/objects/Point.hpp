@@ -2,54 +2,48 @@
 #define GAME3D_OBJECTS_POINT_HPP
 
 #include <GL/gl.h>
+#include <glm/ext/vector_float3.hpp>
 
 namespace game3D::objects {
-    class Point;
+class Point;
 
-    typedef Point Vector;    
+typedef Point Vector;
 
-    class Point {
-        private :
-            GLfloat x,y,z;
-        public :
-            Point();
+class Point : glm::vec3 {
+private:
+public:
+  Point();
 
-            Point(Point& p);
+  Point(Point &p);
 
-            Point(const GLfloat*& coord);
+  Point(const GLfloat *&coord);
 
-            Point(const GLfloat x, const GLfloat y, const GLfloat z);
+  Point(const GLfloat x, const GLfloat y, const GLfloat z);
 
-            GLfloat* toGL();
+  GLfloat *toGL();
 
-            void modulo(GLfloat modulo);
+  void modulo(GLfloat modulo);
 
-            void moveAmount(GLfloat dx, GLfloat dy, GLfloat dz);
+  void moveAmount(GLfloat dx, GLfloat dy, GLfloat dz);
 
-            void moveAmount(const Vector& v);
+  void moveAmount(const Vector &v);
 
-            void moveTo(GLfloat x,GLfloat y,GLfloat z);
+  void moveTo(GLfloat x, GLfloat y, GLfloat z);
 
-            void rotate(Point axis, GLfloat rx, GLfloat ry, GLfloat rz);
+  void rotate(Point axis, GLfloat rx, GLfloat ry, GLfloat rz);
 
-            GLfloat getX() const;
+  GLfloat getX() const;
 
-            GLfloat getY() const;
+  GLfloat getY() const;
 
-            GLfloat getZ() const;
+  GLfloat getZ() const;
 
+  /**
+   * Returns the vector of the difference between the two points
+   */
+  static Vector diff(const Point &a, const Point &b);
+};
 
-            /**
-            * Returns the vector of the difference between the two points 
-            */
-            static Vector diff(const Point& a, const Point& b);
-
-    };
-
-
-
-}
-
-
+} // namespace game3D::objects
 
 #endif

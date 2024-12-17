@@ -20,8 +20,6 @@ int main() {
 
     game3D::Game *a = new game3D::Game();
 
-    logGL();
-
     // game3D::graphics::Shader s("a", "b");
 
     a->mainLoop();
@@ -41,14 +39,4 @@ int main() {
   game3D::Logger::info("Game exited normally.");
 
   return 0;
-}
-
-void logGL() {
-  stringstream ss;
-
-  const unsigned char *x = glGetString(GL_VERSION);
-
-  ss << "USING OPENGL VERSION : " << x << endl;
-
-  game3D::Logger::info(ss.str());
 }

@@ -8,6 +8,8 @@
 
 using namespace game3D::graphics;
 
+Mesh::Mesh() {}
+
 Mesh::Mesh(const VertexArray &vertices,
            const std::vector<unsigned int> &indices,
            const std::vector<Texture> &texture) {
@@ -17,6 +19,7 @@ Mesh::Mesh(const VertexArray &vertices,
 }
 
 void Mesh::draw(Shader &shader) {
+  // Logger::debug("Mesh draw entered");
   float *vertices;
 
   int len = this->vertices.toArr(&vertices);
@@ -36,8 +39,18 @@ void Mesh::draw(Shader &shader) {
     indices[i] = this->indices.at(i);
   }
 
-  // game3D::Logger::debug("Indices cloned");
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   glEnableClientState(GL_VERTEX_ARRAY);
+
+  // Logger::debug("Trying to bind texture...");
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glColor3f(1.0f, 1.0f, 1.0f);
+  glBindTexture(GL_TEXTURE_2D, this->texture.back().id);
+
+  // game3D::Logger::debug("Indices cloned");
+
   unsigned int VAO, VBO;
 
   // VERTICE BUFFER
@@ -68,13 +81,16 @@ void Mesh::draw(Shader &shader) {
   shader.use();
 
   // game3D::Logger::debug("Shader used");
+  // Logger::debug("Drawing ...");
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, indices);
   // glBindVertexArray(0);
   glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
   glUseProgram(0);
 
   free(vertices);
   free(indices);
+  // Logger::debug("Exiting mesh draw");
 }

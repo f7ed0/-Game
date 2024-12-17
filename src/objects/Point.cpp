@@ -1,6 +1,8 @@
 #include "objects/Point.hpp"
 #include <cmath>
 #include <cstdlib>
+#include <glm/geometric.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 #include <iostream>
 
 using namespace game3D::objects;
@@ -56,52 +58,13 @@ void Point::moveTo(GLfloat _x, GLfloat _y, GLfloat _z) {
 }
 
 void Point::rotate(Point axis, GLfloat rx, GLfloat ry, GLfloat rz) {
-  GLfloat cosx, sinx, cosy, siny, cosz, sinz;
-
-  Vector dp;
-  dp = Point::diff(*this, axis);
-  Vector angle = {0.0f, 0.0f, 0.0f};
-
-  if (rx == 0) {
-    cosx = 1;
-    sinx = 0;
-  } else {
-    cosx = cosf32(rx);
-    sinx = sinf32(rx);
-  }
-  if (ry == 0) {
-    cosy = 1;
-    siny = 0;
-  } else {
-    cosy = cosf32(ry);
-    siny = sinf32(ry);
-  }
-  if (rz == 0) {
-    cosz = 1;
-    sinz = 0;
-  } else {
-    cosz = cosf32(rz);
-    sinz = sinf32(rz);
-  }
-
-  GLfloat Axx = cosz * cosy;
-  GLfloat Axy = cosz * siny * sinx - sinz * cosx;
-  GLfloat Axz = cosz * siny * cosx + sinz * sinx;
-
-  GLfloat Ayx = sinz * cosy;
-  GLfloat Ayy = sinz * siny * sinx + cosz * cosx;
-  GLfloat Ayz = sinz * siny * cosx - cosz * sinx;
-
-  GLfloat Azx = -siny;
-  GLfloat Azy = cosy * sinx;
-  GLfloat Azz = cosy * cosx;
-
-  angle.x = Axx * dp.x + Axy * dp.y + Axz * dp.z;
-  angle.y = Ayx * dp.x + Ayy * dp.y + Ayz * dp.z;
-  angle.z = Azx * dp.x + Azy * dp.y + Azz * dp.z;
-
-  this->moveTo(axis.x, axis.y, axis.z);
-  this->moveAmount(angle);
+  Point torot = Point::diff(*this, axis);
+  glm::vec3 n = glm::rotate(torot, rx, {1, 0, 0});
+  n = glm::rotate(n, ry, {0, 1, 0});
+  n = glm::rotate(n, rz, {0, 0, 1});
+  this->x = axis.x + n.x;
+  this->y = axis.y + n.y;
+  this->z = axis.z + n.z;
 }
 
 Vector Point::diff(const Point &a, const Point &b) {

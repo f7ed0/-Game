@@ -17,11 +17,13 @@ void Game::mainLoop() {
     delta = (float)(this->timing - oldtiming) / 1000;
 
     this->eventLoop(delta);
+    // Logger::debug("Eventloop passed");
     this->renderLoop(delta);
+    // Logger::debug("render loop passed");
 
     frame_time_acc += (float)(SDL_GetTicks64() - timing) / 180;
     if ((++counter) % 180 == 0) {
-      ss.clear();
+      ss.str("");
       ss << "Mean frametime : " << frame_time_acc
          << "ms | Max fps possible : " << 1000 / frame_time_acc;
       Logger::debug(ss.str());
@@ -32,14 +34,14 @@ void Game::mainLoop() {
         (16 - ((useconds_t)(SDL_GetTicks64() - timing))) * 1000;
 
     if (wait_time > 16000) {
-      ss.clear();
+      ss.str("");
       ss << "Wait time to loong : " << (float)wait_time / 1000 << "ms";
       Logger::warn(ss.str());
       wait_time = 0;
     }
 
     usleep(wait_time);
-    ss.clear();
+    // Logger::debug("Loop");
   }
   Logger::info("========= MAINLOOP EXITED =======");
 }

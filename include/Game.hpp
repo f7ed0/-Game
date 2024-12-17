@@ -1,6 +1,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include "graphics/Texture.hpp"
 #include "graphics/shader.hpp"
 #include "objects/Cube.hpp"
 #include "player/Camera.hpp"
@@ -22,6 +23,7 @@ private:
   // player::Camera cam;
   // player::KeyboardHandler kb;
   static const SDL_WindowFlags w_flags = SDL_WINDOW_OPENGL;
+  std::vector<graphics::Texture> textureArr;
   graphics::Shader shader;
 
 protected:

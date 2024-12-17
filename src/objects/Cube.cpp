@@ -1,13 +1,16 @@
 #include "objects/Cube.hpp"
+#include "graphics/Mesh.hpp"
+#include "graphics/Texture.hpp"
 #include "graphics/Vertex.hpp"
 #include "logger/Logger.hpp"
 #include <cmath>
 #include <iostream>
+#include <sstream>
 
 using namespace game3D::objects;
 
 Cube::Cube(Point _center, GLfloat _width) {
-  this->center = new Point(_center.getX(), _center.getY(), -_center.getZ());
+  this->center = new Point(_center.getX(), _center.getY(), _center.getZ());
   this->width = _width;
   this->rotation = new Vector();
 }
@@ -33,83 +36,77 @@ void Cube::moveAmount(GLfloat dx, GLfloat dy, GLfloat dz) {
   this->center->moveAmount(dx, dy, dz);
 }
 
-void Cube::render() {
-  graphics::VertexArray *Vertexes = new graphics::VertexArray();
+void Cube::draw(game3D::graphics::Shader& shader) {
+  graphics::Mesh toRender;
 
-  Point *clones[8];
-
-  for (int i = 0; i < 8; i++) {
-    clones[i] = new Point(*center);
-  }
-
-  clones[0]->moveAmount(-width / 2, -width / 2, width / 2);  // 0
-  clones[1]->moveAmount(width / 2, -width / 2, width / 2);   // 1
-  clones[2]->moveAmount(width / 2, width / 2, width / 2);    // 2
-  clones[3]->moveAmount(-width / 2, width / 2, width / 2);   // 3
-  clones[4]->moveAmount(-width / 2, -width / 2, -width / 2); // 4
-  clones[5]->moveAmount(width / 2, -width / 2, -width / 2);  // 5
-  clones[6]->moveAmount(width / 2, width / 2, -width / 2);   // 6
-  clones[7]->moveAmount(-width / 2, width / 2, -width / 2);  // 7
-
-  // Apply rotation
-  for (int i = 0; i < 8; i++) {
-    clones[i]->rotate(*this->center, this->rotation->getX(),
-                      this->rotation->getY(), this->rotation->getZ());
-  }
-
-  GLubyte cubeIndices[24] = {2, 3, 0, 1, 7, 6, 5, 4, 3, 2, 6, 7,
-                             4, 5, 1, 0, 6, 2, 1, 5, 3, 7, 4, 0};
-
-  for (int i = 0; i < 24; i++) {
-    graphics::Vertex v = graphics::Vertex(*(clones[cubeIndices[i]]));
-
-    v.texcoord.x = ((i % 4 == 1 || i % 4 == 2) ? 1.0f : 0.0f);
-    v.texcoord.y = ((i % 4 == 2 || i % 4 == 3) ? 1.0 : 0.0f);
-
-    Vertexes->push_back(v);
-  }
-
-  for (int i = 0; i < 8; i++) {
-    delete clones[i];
-  }
-
-  GLubyte Indices[4];
-
-  GLfloat *texarr = Vertexes->toTexArr();
-  GLfloat *coordarr = Vertexes->toCoordArr();
-
-  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glColor3f(1.0f, 1.0f, 1.0f);
-
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glEnableClientState(GL_VERTEX_ARRAY);
-
-  glTexCoordPointer(2, GL_FLOAT, 0, texarr);
-
-  glVertexPointer(3, GL_FLOAT, 0, coordarr);
-
-  for (int i = 0; i < 6; i++) {
-    glBindTexture(GL_TEXTURE_2D, this->textures[i]);
-    for (int j = 0; j < 4; j++) {
-      Indices[j] = i * 4 + j;
+  for (int i = -1; i <= 1; i += 2) {
+    for (int j = -1; j <= 1; j += 2) {
+      for (int k = -1; k <= 1; k += 2) {
+        Point a(this->center->getX() + k * this->width * 0.5f,
+          this->center->getY() + j * this->width * 0.5f,
+          this->center->getZ() + i * this->width * 0.5f);
+        a.rotate(*this->center, this->rotation->getX(), this->rotation->getY(),
+          this->rotation->getZ());
+        std::stringstream ss;
+        // ss << a.getX() << " " << a.getY() << " " << a.getZ();
+        // game3D::Logger::debug(ss.str());
+        toRender.vertices.push_back(
+          graphics::Vertex(a.getX(), a.getY(), a.getZ(), 0, 0, 0, 0, 0));
+      }
     }
-    glDrawElements(GL_QUADS, 4, GL_UNSIGNED_BYTE, Indices);
   }
+  for (int i = 0; i < 4; i++) {
+    toRender.vertices.push_back(toRender.vertices.at(i));
+  }
+  toRender.vertices.push_back(toRender.vertices.at(0));
+  toRender.vertices.push_back(toRender.vertices.at(2));
+  // game3D::Logger::debug("");
+  toRender.vertices.at(0).texcoord = { 0.25, 1 };
+  toRender.vertices.at(1).texcoord = { 0.5, 1 };
+  toRender.vertices.at(2).texcoord = { 0.25, 0 };
+  toRender.vertices.at(3).texcoord = { 0.5, 0 };
+  toRender.vertices.at(4).texcoord = { 0.25, 0.667 };
+  toRender.vertices.at(5).texcoord = { 0.5, 0.667 };
+  toRender.vertices.at(6).texcoord = { 0.25, 0.333 };
+  toRender.vertices.at(7).texcoord = { 0.5, 0.333 };
 
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  toRender.vertices.at(8).texcoord = { 0, 0.667 };     // 0
+  toRender.vertices.at(9).texcoord = { 0.75, 0.667 };  // 1
+  toRender.vertices.at(10).texcoord = { 0, 0.333 };    // 2
+  toRender.vertices.at(11).texcoord = { 0.75, 0.333 }; // 3
 
-  delete Vertexes;
-  free(texarr);
-  free(coordarr);
+  toRender.vertices.at(12).texcoord = { 1, 0.667 }; // 0
+  toRender.vertices.at(13).texcoord = { 1, 0.333 }; // 2
+
+  /*
+     toRender.indices = {
+      4, 5, 7, 7, 6, 4, // FRONT FACE
+      2, 6, 7, 3, 2, 7, // TOP FACE
+      0, 1, 5, 5, 4, 0,// BOTTOM FACE
+      0, 3, 1, 3, 0, 2, // BACK FACE
+      0, 4, 6, 6, 2, 0, // Left
+      1, 7, 5, 7, 1, 3, // Right
+  };
+  */
+
+  toRender.indices = {
+      4,  5,  7, 7,  6,  4,  // FRONT FACE
+      2,  6,  7, 3,  2,  7,  // TOP FACE
+      0,  1,  5, 5,  4,  0, // BOTTOM FACE
+      12, 11, 9, 11, 12, 13, // BACK FACE
+      8,  4,  6, 6,  10, 8,  // Left
+      9,  7,  5, 7,  9,  11, // Right
+  };
+
+  toRender.texture.push_back(this->texture.at(0));
+
+  toRender.draw(shader);
 }
 
-void Cube::setTexture(Face face, GLuint tex) { this->textures[face] = tex; }
-
-void Cube::setTextures(GLuint texs[]) {
-  for (int i = 0; i < 6; i++) {
-    this->textures[i] = texs[i];
+void Cube::setTextures(game3D::graphics::Texture tex) {
+  if (this->texture.empty()) {
+    this->texture.push_back(tex);
+  } else {
+    this->texture.at(0) = tex;
   }
 }

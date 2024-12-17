@@ -12,6 +12,8 @@ public:
   std::vector<unsigned int> indices;
   std::vector<Texture> texture;
 
+  Mesh();
+
   Mesh(const VertexArray &vertices, const std::vector<unsigned int> &indices,
        const std::vector<Texture> &texture);
 

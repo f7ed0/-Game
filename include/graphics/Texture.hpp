@@ -1,15 +1,16 @@
 #ifndef GAME_GRAPHICS_TEXTURE
 #define GAME_GRAPHICS_TEXTURE
 
+#include <GL/gl.h>
 #include <string>
 
 namespace game3D::graphics {
 class Texture {
 public:
-  unsigned int id;
+  GLuint id;
   std::string type;
 
-  Texture();
+  Texture(const std::string &path);
 };
 } // namespace game3D::graphics
 #endif
